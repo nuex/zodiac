@@ -6,7 +6,7 @@ ZODIAC is a static website generator powered by sh and awk.
 
 ## INSTALL
 
-    git clone ssh://github.com/nuex/zodiac.git
+    git clone git://github.com/nuex/zodiac.git
     
 Edit the config.mk file to customize the install paths
 
