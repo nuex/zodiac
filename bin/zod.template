@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # ZODIAC - a simple static site generator
-# Copyright (c) 2011 Chase Allen James <zodiac-nx@nu-ex.com>
+# Copyright (c) 2011 Chase Allen James <nx-zodiac@nu-ex.com>
 
 ZODLIB=ZODLIB_PATH
 
