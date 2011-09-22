@@ -51,8 +51,6 @@ Page metadata will always override global metadata of the same key.
 
 Templates come in two forms: markdown files with an `.md` extension or layout files with a `.layout` extension. Metadata can be bound to templates by using the `{{key}}` notation in your markdown and layout files. A `main.layout` file could look something like this:
 
-`{{{yield}}}` is a special tag that renders the markdown page content within the layout. `{{{yield}}}` can only be used in the `main.layout` file.
-
     <!DOCTYPE html>
     <html lang="en">
       <head>
@@ -72,6 +70,8 @@ Templates come in two forms: markdown files with an `.md` extension or layout fi
         </footer>
       </body>
     </html>
+
+`{{{yield}}}` is a special tag that renders the markdown page content within the layout. `{{{yield}}}` can only be used in the `main.layout` file.
 
 ### Helpers
 
