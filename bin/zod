@@ -1,0 +1,86 @@
+#!/bin/sh
+
+# ZODIAC - a simple static site generator
+# Copyright (c) 2011 Chase Allen James <zodiac-nx@nu-ex.com>
+
+ZODLIB="$( cd "$( dirname "$0" )" && pwd )/../lib"
+
+proj=$1
+target=$2
+
+if [ -z "$1" ] || [ -z "$2" ]; then
+  echo "usage: zod projectdir targetdir"
+  exit
+fi
+
+if [ ! -e $proj ]; then
+  echo "error: project directory does not exist"
+  exit
+fi
+
+if [ ! -e $target ]; then
+  echo "error: target directory does not exist"
+  exit
+fi
+
+layout=$proj/main.layout
+global_meta=$proj/global.meta
+
+for f in $(find $proj/*); do
+  dir=$(dirname $f)
+
+  # Find the target directory if one must be created
+  # Start by pulling the project directory out of the filepath
+  # with awk and then removing the filename with sed
+  targetdir=$(awk "BEGIN { split(\"$f\",a,\"$proj/\"); print a[2] }" | sed "s/`basename $f`//")
+  targetpath=$target/$targetdir
+  if [ ! -z "$targetdir" ]; then
+    mkdir -p $target/$targetdir
+  else
+    # There is no directory to create in target,
+    # i.e. file is in the root of the project
+    targetpath=$target
+  fi
+
+  filename=$(basename $f)
+  if [ "$(echo $filename | sed 's/\.md//;s/\.meta//;s/\.layout//')" == $filename ] &&
+     [ $filename != "helpers.awk" ]; then
+
+    # we're just moving a file over
+    if [ ! -d $f ]; then
+      cp $f $targetpath/
+    fi
+
+  elif [ "$(echo $filename | sed 's/\.md//')" != $filename ]; then
+
+    page=$(basename $f | sed 's/\.md//')
+
+    ops=""
+
+    if [ -e $proj/helpers.awk ]; then
+      ops="$ops -f `pwd`/$proj/helpers.awk"
+    fi
+
+    ops="$ops -f $ZODLIB/render.awk"
+    ops="$ops -v AWKLIB=\"$ZODLIB\""
+
+    if [ -e $global_meta ]; then
+      ops="$ops $global_meta"
+    fi
+
+    if [ -e $dir/$page.meta ]; then
+      ops="$ops $dir/$page.meta"
+    fi
+
+    ops="$ops $dir/$page.md"
+
+    if [ -e $layout ]; then
+      ops="$ops $layout"
+    fi
+
+    awk $ops > $targetpath/$page.html
+
+  fi
+    
+
+done

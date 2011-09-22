@@ -1,0 +1,2 @@
+all:
+	zod site www

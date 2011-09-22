@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <title>{{page_title}}</title>
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">{{site_title}}</a></h1>
+    </header>
+    <article>
+      {{{yield}}}
+    </article>
+    <footer>
+      <p>powered by static files</p>
+    </footer>
+  </body>
+</html>
