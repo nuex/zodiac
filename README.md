@@ -97,6 +97,8 @@ Just be sure to set the data array in the load_helpers() function at the top of 
 
 ## FUTURE
 
+- HTML content pages (i.e. no filtering)
+- multiple filters support
 - multiple layout support
 - mustache support
 - partials/snippets
