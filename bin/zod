@@ -23,10 +23,24 @@ if [ ! -e $target ]; then
   exit
 fi
 
-layout=$proj/main.layout
-global_meta=$proj/global.meta
 
-for f in $(find $proj/*); do
+helpers=$proj/helpers.awk
+if [ -e $helpers ]; then
+  helper_opts="-f `pwd`/$helpers"
+fi
+
+global_meta=$proj/global.meta
+if [ -e $global_meta ]; then
+  global_meta_opts=$global_meta
+fi
+
+layout=$proj/main.layout
+if [ -e $layout ]; then
+  layout_opts=$layout
+fi
+
+files=$(find $proj -type f ! -name "*.layout" ! -name "*.meta" ! -name "*.awk")
+for f in $files; do
   dir=$(dirname $f)
 
   # Find the target directory if one must be created
@@ -42,45 +56,22 @@ for f in $(find $proj/*); do
     targetpath=$target
   fi
 
-  filename=$(basename $f)
-  if [ "$(echo $filename | sed 's/\.md//;s/\.meta//;s/\.layout//')" == $filename ] &&
-     [ $filename != "helpers.awk" ]; then
+  if [ ! -z "$(find $f -name *.md)" ]; then
+    page_name=$(basename $f | sed 's/\.md//')
 
-    # we're just moving a file over
-    if [ ! -d $f ]; then
-      cp $f $targetpath/
+    if [ -e $dir/$page_name.meta ]; then
+      page_meta_opts=$dir/$page_name.meta
     fi
 
-  elif [ "$(echo $filename | sed 's/\.md//')" != $filename ]; then
+    awk -f $ZODLIB/render.awk \
+        -v AWKLIB="$ZODLIB" \
+        $helper_opts \
+        $global_meta_opts \
+        $page_meta_opts \
+        $f \
+        $layout_opts > $targetpath/$page_name.html
 
-    page=$(basename $f | sed 's/\.md//')
-
-    ops=""
-
-    if [ -e $proj/helpers.awk ]; then
-      ops="$ops -f `pwd`/$proj/helpers.awk"
-    fi
-
-    ops="$ops -f $ZODLIB/render.awk"
-    ops="$ops -v AWKLIB=\"$ZODLIB\""
-
-    if [ -e $global_meta ]; then
-      ops="$ops $global_meta"
-    fi
-
-    if [ -e $dir/$page.meta ]; then
-      ops="$ops $dir/$page.meta"
-    fi
-
-    ops="$ops $dir/$page.md"
-
-    if [ -e $layout ]; then
-      ops="$ops $layout"
-    fi
-
-    awk $ops > $targetpath/$page.html
-
+  else
+    cp $f $targetpath # Copying a non-template file
   fi
-    
-
 done
