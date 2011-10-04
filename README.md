@@ -41,7 +41,7 @@ A typical Zodiac project will look something like this:
     title: Contact
     author: Me
 
-Each markdown page can have its own meta file. The only requirement is that the meta file is in the same directory as the page, has the same name as the page and has the `.meta` file extension.
+Each page can have its own meta file. The only requirement is that the meta file is in the same directory as the page, has the same name as the page and has the `.meta` file extension.
 
 The optional `global.meta` file contains data that is available to all of your site's pages, like a site title.
 
@@ -49,7 +49,7 @@ Page metadata will always override global metadata of the same key.
 
 ### Templates
 
-Templates come in two forms, page templates and layout templates. Metadata can be bound to templates by using the `{{key}}` notation in your markdown and layout files.
+Templates come in two forms, page templates and layout templates. Metadata can be bound to templates by using the `{{key}}` notation in your pages and layout files.
 
 Page templates can be either markdown files with an `.md` extension or plain HTML files with a `.html` extension.
 
@@ -75,7 +75,7 @@ The `main.layout` file wraps HTML content around a page template.  A `main.layou
       </body>
     </html>
 
-`{{{yield}}}` is a special tag that renders the markdown page content within the layout. `{{{yield}}}` can only be used in the `main.layout` file.
+`{{{yield}}}` is a special tag that renders the page content within the layout. `{{{yield}}}` can only be used in the `main.layout` file.
 
 ### Helpers
 
