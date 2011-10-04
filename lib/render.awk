@@ -5,10 +5,22 @@ BEGIN {
   helpers_loaded = "no"
   content = ""
   layout = ""
+  filter = "html"
 }
 
 {
-  action = action_from_filetype(FILENAME)
+  split(FILENAME, parts, ".")
+  ext = parts[length(parts)]
+  if (ext == "meta") action = "meta"
+  if (ext == "layout") action = "layout"
+  if (ext == "md") {
+    action = "page"
+    filter = "markdown"
+  }
+  if (ext == "html") {
+    action = "page"
+    filter = "html"
+  }
 }
 
 # Process lines from meta files
@@ -58,12 +70,6 @@ END {
   }
 }
 
-function action_from_filetype(filename) {
-  if (match(filename, /\.meta/)) return "meta"
-  if (match(filename, /\.layout/)) return "layout"
-  if (match(filename, /\.md/)) return "page"
-}
-
 function bind_data(txt,   tag, key) {
   if (match(txt, /{{([^}]*)}}/)) {
     tag = substr(txt, RSTART, RLENGTH)
@@ -77,7 +83,8 @@ function bind_data(txt,   tag, key) {
 }
 
 function render_content(txt) {
-  return markdown(txt)
+  if (filter == "html") return txt
+  if (filter == "markdown") return markdown(txt)
 }
 
 function markdown(txt,    rand_date, tmpfile, rendered_txt, date_cmd, markdown_cmd, line) {

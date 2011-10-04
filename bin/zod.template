@@ -56,11 +56,16 @@ for f in $files; do
     targetpath=$target
   fi
 
-  if [ ! -z "$(find $f -name *.md)" ]; then
-    page_name=$(basename $f | sed 's/\.md//')
+  file_basename=$(basename $f)
+  file_extension=$(echo $file_basename | awk -F . '{print $NF}') 
+  file_name=$(echo $file_basename | sed -e 's/\.md//' -e 's/\.html//')
 
-    if [ -e $dir/$page_name.meta ]; then
-      page_meta_opts=$dir/$page_name.meta
+  # If the file's extension wasn't replaced (i.e. same as basename) then
+  # we know it isn't a template.
+  if [ $file_name != $file_basename ]; then
+
+    if [ -e $dir/$file_name.meta ]; then
+      page_meta_opts=$dir/$file_name.meta
     fi
 
     awk -f $ZODLIB/render.awk \
@@ -69,7 +74,7 @@ for f in $files; do
         $global_meta_opts \
         $page_meta_opts \
         $f \
-        $layout_opts > $targetpath/$page_name.html
+        $layout_opts > $targetpath/$file_name.html
 
   else
     cp $f $targetpath # Copying a non-template file

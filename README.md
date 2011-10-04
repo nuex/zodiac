@@ -49,7 +49,11 @@ Page metadata will always override global metadata of the same key.
 
 ### Templates
 
-Templates come in two forms: markdown files with an `.md` extension or layout files with a `.layout` extension. Metadata can be bound to templates by using the `{{key}}` notation in your markdown and layout files. A `main.layout` file could look something like this:
+Templates come in two forms, page templates and layout templates. Metadata can be bound to templates by using the `{{key}}` notation in your markdown and layout files.
+
+Page templates can be either markdown files with an `.md` extension or plain HTML files with a `.html` extension.
+
+The `main.layout` file wraps HTML content around a page template.  A `main.layout` file could look something like this:
 
     <!DOCTYPE html>
     <html lang="en">
@@ -97,7 +101,6 @@ Just be sure to set the data array in the load_helpers() function at the top of 
 
 ## FUTURE
 
-- HTML content pages (i.e. no filtering)
 - multiple filters support
 - multiple layout support
 - mustache support
