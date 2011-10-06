@@ -5,8 +5,8 @@
 
 zod_lib=ZODLIB_PATH
 
-proj=$1
-target=$2
+proj="$1"
+target="$2"
 
 _zod_error() {
   echo -e ">>> ERROR: $*" >&2
@@ -21,4 +21,4 @@ find "$proj" -type f \
               ! -name "*.layout" \
               ! -name "*.meta" \
               ! -name "helpers.awk" \
-              -exec zod_render $zod_lib $proj $target {} \;
+              -exec zod_render "$zod_lib" "$proj" "$target" {} \;

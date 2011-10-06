@@ -3,10 +3,10 @@
 # render a zodiac page
 # used internally by zod (uses file as single argument)
 
-zod_lib=$1
-proj=$2
-target=$3
-f=$4
+zod_lib="$1"
+proj="$2"
+target="$3"
+f="$4"
 
 markdown_filter_cmd="awk -f $zod_lib/markdown.awk"
 
