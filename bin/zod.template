@@ -20,4 +20,4 @@ find "$ZOD_PROJECT" -type f \
               ! -name "*.layout" \
               ! -name "*.meta" \
               ! -name "helpers.awk" \
-              -exec /home/nuex/_dev/zodiac/bin/zod_render {} \;
+              -exec zod_render {} \;
