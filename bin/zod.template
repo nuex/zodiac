@@ -52,8 +52,6 @@ for f in $files; do
     meta=${f%.$ext}.meta
     [ -f $meta ] && page_meta_opts=$meta
 
-    [ $ext == "md" ] && filter_opts=""
-
     page=${f##*/}
     page=${page%.$ext}.html
 
