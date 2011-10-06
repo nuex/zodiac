@@ -3,80 +3,69 @@
 # ZODIAC - a simple static site generator
 # Copyright (c) 2011 Chase Allen James <nx-zodiac@nu-ex.com>
 
-ZODLIB=ZODLIB_PATH
+zod_lib=ZODLIB_PATH
+markdown_filter_cmd="awk -f $zod_lib/markdown.awk"
 
 proj=$1
 target=$2
 
-if [ -z "$1" ] || [ -z "$2" ]; then
-  echo "usage: zod projectdir targetdir"
-  exit
-fi
+_zod_error() {
+  echo -e ">>> ERROR: $*" >&2
+  exit 1
+}
 
-if [ ! -e $proj ]; then
-  echo "error: project directory does not exist"
-  exit
-fi
-
-if [ ! -e $target ]; then
-  echo "error: target directory does not exist"
-  exit
-fi
-
+[ ! "$1" ] || [ ! "$2" ] && { echo "usage: zod projectdir targetdir"; exit; }
+[ ! -d $proj ] && _zod_error "project directory does not exist"
+[ ! -d $target ] && _zod_error "target directory does not exist"
 
 helpers=$proj/helpers.awk
-if [ -e $helpers ]; then
-  helper_opts="-f `pwd`/$helpers"
-fi
+[ -f $helpers ] && helper_opts="-f $(pwd)/$helpers"
 
 global_meta=$proj/global.meta
-if [ -e $global_meta ]; then
-  global_meta_opts=$global_meta
-fi
+[ -f $global_meta ] && global_meta_opts=$global_meta
 
 layout=$proj/main.layout
-if [ -e $layout ]; then
-  layout_opts=$layout
-fi
+[ -f $layout ] && layout_opts=$layout
 
-files=$(find $proj -type f ! -name "*.layout" ! -name "*.meta" ! -name "*.awk")
+files=$(find $proj -type f \
+            ! -name "*.layout" \
+            ! -name "*.meta" \
+            ! -name "helpers.awk")
+
 for f in $files; do
-  dir=$(dirname $f)
 
   # Find the target directory if one must be created
-  # Start by pulling the project directory out of the filepath
-  # with awk and then removing the filename with sed
-  targetdir=$(awk "BEGIN { split(\"$f\",a,\"$proj/\"); print a[2] }" | sed "s/`basename $f`//")
-  targetpath=$target/$targetdir
-  if [ ! -z "$targetdir" ]; then
-    mkdir -p $target/$targetdir
+  subdir=${f%/*}
+  subdir=${subdir#$proj}
+  if [ "$subdir" ]; then
+    destination="$target$subdir"
+    mkdir -p "$destination"
   else
     # There is no directory to create in target,
     # i.e. file is in the root of the project
-    targetpath=$target
+    destination=$target
   fi
 
-  file_basename=$(basename $f)
-  file_extension=$(echo $file_basename | awk -F . '{print $NF}') 
-  file_name=$(echo $file_basename | sed -e 's/\.md//' -e 's/\.html//')
+  ext=${f##*.}
+  if [ $ext == "md" ] || [ $ext == "html" ]; then
 
-  # If the file's extension wasn't replaced (i.e. same as basename) then
-  # we know it isn't a template.
-  if [ $file_name != $file_basename ]; then
+    meta=${f%.$ext}.meta
+    [ -f $meta ] && page_meta_opts=$meta
 
-    if [ -e $dir/$file_name.meta ]; then
-      page_meta_opts=$dir/$file_name.meta
-    fi
+    [ $ext == "md" ] && filter_opts=""
 
-    awk -f $ZODLIB/render.awk \
-        -v AWKLIB="$ZODLIB" \
+    page=${f##*/}
+    page=${page%.$ext}.html
+
+    awk -f $zod_lib/render.awk \
+        -v markdown_filter_cmd="$markdown_filter_cmd" \
         $helper_opts \
-        $global_meta_opts \
-        $page_meta_opts \
-        $f \
-        $layout_opts > $targetpath/$file_name.html
+        "$global_meta_opts" \
+        "$page_meta_opts" \
+        "$f" \
+        "$layout_opts" > "$destination/$page"
 
   else
-    cp $f $targetpath # Copying a non-template file
+    cp "$f" "$destination" # Copying a non-template file
   fi
 done

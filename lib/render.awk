@@ -11,16 +11,10 @@ BEGIN {
 {
   split(FILENAME, parts, ".")
   ext = parts[length(parts)]
-  if (ext == "meta") action = "meta"
-  if (ext == "layout") action = "layout"
-  if (ext == "md") {
-    action = "page"
-    filter = "markdown"
-  }
-  if (ext == "html") {
-    action = "page"
-    filter = "html"
-  }
+  if (ext == "meta")    { action = "meta" }
+  if (ext == "layout")  { action = "layout" }
+  if (ext == "md")      { action = "page"; filter = "markdown" }
+  if (ext == "html")    { action = "page"; filter = "html" }
 }
 
 # Process lines from meta files
@@ -92,8 +86,8 @@ function markdown(txt,    rand_date, tmpfile, rendered_txt, date_cmd, markdown_c
   date_cmd | getline rand_date
   close(date_cmd)
 
-  tmpfile = "/tmp/render" rand_date
-  markdown_cmd = "awk -f " AWKLIB "/markdown.awk > " tmpfile
+  tmpfile = "/tmp/awk_render" rand_date
+  markdown_cmd = markdown_filter_cmd " > " tmpfile
 
   # pipe content to markdown.awk
   print txt | markdown_cmd
