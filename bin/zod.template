@@ -3,9 +3,9 @@
 # ZODIAC - a simple static site generator
 # Copyright (c) 2011 Chase Allen James <nx-zodiac@nu-ex.com>
 
-ZOD_LIB=ZODLIB_PATH
-ZOD_PROJECT=$1
-ZOD_TARGET=$2
+export ZOD_LIB=ZODLIB_PATH
+export ZOD_PROJECT=$1
+export ZOD_TARGET=$2
 
 _zod_error() {
   echo -e ">>> ERROR: $*" >&2
@@ -15,8 +15,6 @@ _zod_error() {
 [ "$#" -ne 2 ] && { echo "usage: zod projectdir targetdir"; exit; }
 [ ! -d "$ZOD_PROJECT" ] && _zod_error "project directory does not exist"
 [ ! -d "$ZOD_TARGET" ] && _zod_error "target directory does not exist"
-
-export ZOD_LIB ZOD_PROJECT ZOD_TARGET
 
 find "$ZOD_PROJECT" -type f \
               ! -name "*.layout" \
