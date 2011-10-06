@@ -106,6 +106,10 @@ Just be sure to set the data array in the load_helpers() function at the top of 
 - mustache support
 - partials/snippets
 
+## CREDITS
+
+zsw: for the introduction to parameter expansion and other shell scripting techniques
+
 ## LICENSE
 
 MIT
