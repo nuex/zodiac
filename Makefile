@@ -9,10 +9,11 @@ all:
 install: all
 	@echo Installing zod executable to ${PREFIX}/bin
 	@mkdir -p ${PREFIX}/bin
+	@cp bin/zod ${PREFIX}/bin
 	@echo Installing awk lib files to ${AWKLIB}
 	@mkdir -p ${AWKLIB}
-	@cp lib/render.awk ${AWKLIB}/
-	@cp lib/markdown.awk ${AWKLIB}/
+	@cp lib/render.awk ${AWKLIB}
+	@cp lib/markdown.awk ${AWKLIB}
 	@echo Installation Complete
 
 uninstall:
