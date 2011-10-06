@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # render a zodiac page
-# used internally by zod (uses file as single argument)
 
 zod_lib="$1"
 proj="$2"
