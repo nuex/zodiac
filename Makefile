@@ -7,9 +7,10 @@ all:
 	@echo Compiled
 
 install: all
-	@echo Installing zod executable to ${PREFIX}/bin
+	@echo Installing zod executables to ${PREFIX}/bin
 	@mkdir -p ${PREFIX}/bin
 	@cp bin/zod ${PREFIX}/bin
+	@cp bin/zod_render ${PREFIX}/bin
 	@echo Installing awk lib files to ${AWKLIB}
 	@mkdir -p ${AWKLIB}
 	@cp lib/render.awk ${AWKLIB}
@@ -19,6 +20,7 @@ install: all
 uninstall:
 	@echo Uninstalling zod executable
 	@rm ${PREFIX}/bin/zod
+	@rm ${PREFIX}/bin/zod_render
 	@echo Uninstalling awk lib files
 	@rm -rf ${AWKLIB}
 	@echo Uninstallation Complete

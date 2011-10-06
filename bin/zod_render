@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# render a zodiac page
+# used internally by zod (uses file as single argument)
+
+f="$*"
+markdown_filter_cmd="awk -f $ZOD_LIB/markdown.awk"
+
+[ -f "$ZOD_PROJECT/helpers.awk" ] && helper_opts="$ZOD_PROJECT/helpers.awk"
+[ -f "$ZOD_PROJECT/global.meta" ] && global_meta_opts="$ZOD_PROJECT/global.meta"
+[ -f "$ZOD_PROJECT/main.layout" ] && layout_opts="$ZOD_PROJECT/main.layout"
+
+# Find the target directory if one must be created
+subdir=${f%/*}
+subdir=${subdir#$ZOD_PROJECT}
+if [ "$subdir" ]; then
+  destination="$ZOD_TARGET$subdir"
+  mkdir -p "$destination"
+else
+  # There is no directory to create in target,
+  # i.e. file is in the root of the project
+  destination="$ZOD_TARGET"
+fi
+
+ext=${f##*.}
+if [ $ext == "md" ] || [ $ext == "html" ]; then
+
+  meta=${f%.$ext}.meta
+  [ -f "$meta" ] && page_meta_opts="$meta"
+
+  page=${f##*/}
+  page=${page%.$ext}.html
+
+  set -- -f "$ZOD_LIB/render.awk"
+  [ "$helper_opts" ] && set -- "$@" -f "$helper_opts"
+  set -- "$@" -v markdown_filter_cmd="$markdown_filter_cmd" \
+              "$global_meta_opts" \
+              "$page_meta_opts" \
+              "$f" \
+              "$layout_opts"
+
+  awk "$@" > "$destination/$page"
+
+else
+  cp "$f" "$destination" # Copying a non-template file
+fi
