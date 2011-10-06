@@ -32,9 +32,6 @@ if [ $ext == "md" ] || [ $ext == "html" ]; then
   meta=${f%.$ext}.meta
   [ -f "$meta" ] && page_meta_opts="$meta"
 
-  page=${f##*/}
-  page=${page%.$ext}.html
-
   set -- -f "$zod_lib/render.awk"
   [ "$helper_opts" ] && set -- "$@" -f "$helper_opts"
   set -- "$@" -v markdown_filter_cmd="$markdown_filter_cmd" \
@@ -42,6 +39,9 @@ if [ $ext == "md" ] || [ $ext == "html" ]; then
               "$page_meta_opts" \
               "$f" \
               "$layout_opts"
+
+  page=${f##*/}
+  page=${page%.$ext}.html
 
   awk "$@" > "$destination/$page"
 
