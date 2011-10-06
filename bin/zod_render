@@ -3,23 +3,27 @@
 # render a zodiac page
 # used internally by zod (uses file as single argument)
 
-f="$*"
-markdown_filter_cmd="awk -f $ZOD_LIB/markdown.awk"
+zod_lib=$1
+proj=$2
+target=$3
+f=$4
 
-[ -f "$ZOD_PROJECT/helpers.awk" ] && helper_opts="$ZOD_PROJECT/helpers.awk"
-[ -f "$ZOD_PROJECT/global.meta" ] && global_meta_opts="$ZOD_PROJECT/global.meta"
-[ -f "$ZOD_PROJECT/main.layout" ] && layout_opts="$ZOD_PROJECT/main.layout"
+markdown_filter_cmd="awk -f $zod_lib/markdown.awk"
+
+[ -f "$proj/helpers.awk" ] && helper_opts="$proj/helpers.awk"
+[ -f "$proj/global.meta" ] && global_meta_opts="$proj/global.meta"
+[ -f "$proj/main.layout" ] && layout_opts="$proj/main.layout"
 
 # Find the target directory if one must be created
 subdir=${f%/*}
-subdir=${subdir#$ZOD_PROJECT}
+subdir=${subdir#$proj}
 if [ "$subdir" ]; then
-  destination="$ZOD_TARGET$subdir"
+  destination="$target$subdir"
   mkdir -p "$destination"
 else
   # There is no directory to create in target,
   # i.e. file is in the root of the project
-  destination="$ZOD_TARGET"
+  destination="$target"
 fi
 
 ext=${f##*.}
@@ -31,7 +35,7 @@ if [ $ext == "md" ] || [ $ext == "html" ]; then
   page=${f##*/}
   page=${page%.$ext}.html
 
-  set -- -f "$ZOD_LIB/render.awk"
+  set -- -f "$zod_lib/render.awk"
   [ "$helper_opts" ] && set -- "$@" -f "$helper_opts"
   set -- "$@" -v markdown_filter_cmd="$markdown_filter_cmd" \
               "$global_meta_opts" \
