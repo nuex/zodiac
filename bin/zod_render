@@ -10,6 +10,7 @@ f="$4"
 markdown_filter_cmd="awk -f $zod_lib/markdown.awk"
 
 [ -f "$proj/helpers.awk" ] && helper_opts="$proj/helpers.awk"
+[ -f "$proj/filters.config" ] && filter_opts="$proj/filters.config"
 [ -f "$proj/global.meta" ] && global_meta_opts="$proj/global.meta"
 [ -f "$proj/main.layout" ] && layout_opts="$proj/main.layout"
 
@@ -34,6 +35,7 @@ if [ $ext == "md" ] || [ $ext == "html" ]; then
   set -- -f "$zod_lib/render.awk"
   [ "$helper_opts" ] && set -- "$@" -f "$helper_opts"
   set -- "$@" -v markdown_filter_cmd="$markdown_filter_cmd" \
+              "$filter_opts" \
               "$global_meta_opts" \
               "$page_meta_opts" \
               "$f" \
