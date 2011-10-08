@@ -1,0 +1,11 @@
+- user-defined filters
+  - per project configuration
+  - site-wide configuration
+- separate metadata parser
+  - allow viewing metadata as a collection for creating listings (i.e. sitemap.xml)
+- contrib tools
+  - example .htaccess config
+  - page creation
+  - blog post
+- partials
+- multiple layouts

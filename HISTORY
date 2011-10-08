@@ -1,0 +1,8 @@
+0.1 / 2011-10-08
+  - First release
+    * supports directories with spaces
+    * parses metadata to be bound to templates
+    * filters markdown
+    * supports plain HTML pages (i.e. no filtering)
+    * copies non-zodiac files
+    * no dependencies
