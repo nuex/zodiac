@@ -7,7 +7,7 @@ proj="$2"
 target="$3"
 f="$4"
 
-markdown_filter_cmd="awk -f $zod_lib/markdown.awk"
+md_builtin="awk -f $zod_lib/markdown.awk"
 
 [ -f "$proj/helpers.awk" ] && helper_opts="$proj/helpers.awk"
 [ -f "$proj/filters.config" ] && filter_opts="$proj/filters.config"
@@ -27,14 +27,22 @@ else
 fi
 
 ext=${f##*.}
-if [ $ext == "md" ] || [ $ext == "html" ]; then
+
+# Add filter support provided by the filters.config file
+[ "$filter_opts" ] && supported="$supported $(zod_supported_extensions "$zod_lib" "$filter_opts")"
+
+for supported_ext in "$supported"; do
+  [ $ext == "$supported_ext" ] && { is_supported=true; break }
+done
+
+if [ "$is_supported" ]; then
 
   meta=${f%.$ext}.meta
   [ -f "$meta" ] && page_meta_opts="$meta"
 
   set -- -f "$zod_lib/render.awk"
   [ "$helper_opts" ] && set -- "$@" -f "$helper_opts"
-  set -- "$@" -v markdown_filter_cmd="$markdown_filter_cmd" \
+  set -- "$@" -v markdown_filter_cmd="$md_builtin" \
               "$filter_opts" \
               "$global_meta_opts" \
               "$page_meta_opts" \

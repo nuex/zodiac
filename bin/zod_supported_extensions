@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# return a list of all supported file extensions
+
+zod_lib="$1"
+filter_opts="$2"
+
+awk -f "$zod_lib/supported_extensions.awk" "$filter_opts"
