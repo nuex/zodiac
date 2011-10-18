@@ -1,20 +1,31 @@
-# zodiac
+# zodiac - a static site generator
+
+ZODIAC is a static website generator powered by sh and awk. The core features of zodiac are:
+
+* utliization of existing tools (i.e. awk, sh, find, etc.)
+* built-in support for markdown
+* a simple, easy to use templating system
+* supports custom helpers written in awk
+* multiple layouts
+* partials
+* configuration, meta, helpers, etc. can be added as you need them
+* support any markup format via external tools
 
 ## SYNOPSIS
 
-ZODIAC is a static website generator powered by sh and awk.
+    zod projectdir targetdir
 
 ## INSTALL
 
     git clone git://github.com/nuex/zodiac.git
     
-Edit the config.mk file to customize the install paths
+Edit the config.mk file to customize the install paths. `/usr/local` is the default install prefix.
 
-    sudo make install
+Run the following (as root if necessary):
 
-## USAGE
+    make install
 
-    zod projectdir targetdir
+## DESCRIPTION
 
 A typical Zodiac project will look something like this:
 
@@ -30,6 +41,17 @@ A typical Zodiac project will look something like this:
         project-2.meta
       cv.md
       cv.meta
+      stylesheets/
+        style.css
+
+And it's output could look like this:
+
+    site/
+      index.html
+      projects/
+        project-1.html
+        project-2.html
+      cv.html
       stylesheets/
         style.css
 
@@ -90,25 +112,83 @@ The `helpers.awk` file is an awk script that can make custom data available to y
 
     # your custom functions
     function page_title(  title) {
-      if (data["title"]) {
-        title = data["title"] " - "
+      if ("title" in data) {
+        return data["title"] "-" data["site_title"]
+      } else {
+        return data["site_title"]
       }
-      title = title data["site_title"]
-      return title
     }
 
-Just be sure to set the data array in the load_helpers() function at the top of the script to make your custom data available to the template.
+Just be sure to set the data array in the `load_helpers()` function at the top of the script to make your custom data available to the template.
 
-## FUTURE
+### Config
 
-- multiple filters support
-- multiple layout support
-- mustache support
-- partials/snippets
+For more control over the parsing and conversion process, a `.zod/config` file can be created within your project directory. Here is a sample config:
+
+    [parse]
+      htm
+      html
+
+    [parse_convert]
+      md      smu
+      txt     asciidoc -s -
+
+    [convert]
+      coffee  coffee -s > {}.js
+
+    [ignore]
+      Makefile
+
+Here we're only parsing (not converting to a different format) files matching `*.htm` and `*.html`.
+
+Files matching `*.md` are going to be parsed and converted using the `smu` markdown parsing program.
+
+Files matching `*.txt` are going to be parsed and converted using `asciidoc`.
+
+Files matching `*.coffee` are going to be converted to JavaScript before being copied into the target directory. The `{}` notation will be expanded to the path and filename of the coffeescript file, but without the `.coffee` extension.
+
+Files matching `Makefile` will be ignored and not copied.
+
+Conversion programs must accept a UNIX-style pipe and send converted data to stdout.
+
+### Per-page Templates and Partials
+
+Multiple templates and partials are also supported.
+
+For example; a `blog.md` page:
+
+  title: my blog
+  layout: blog
+
+A `sidebar.partial`:
+
+  <div id="sidebar">
+    <ul>
+      <li><a href="/blog/some-article.html">Some Article</a></li>
+      <li><a href="/blog/another-one.html">Another One</a></li>
+    </ul>
+  </div>
+
+And `blog.layout`:
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Blog Page</title>
+    </head>
+    <body>
+      <div id="main">
+        {{{yield}}}
+      </div>
+      {{>sidebar}}
+    </body>
+  </html>
+
+`{{>sidebar}}` will be replaced with the parsed contents of `sidebar.partial`.
 
 ## CREDITS
 
-zsw: for the introduction to parameter expansion and other shell scripting techniques
+* zsw: for the introduction to parameter expansion and other shell scripting techniques
 
 ## LICENSE
 
