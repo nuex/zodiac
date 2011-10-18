@@ -1,3 +1,6 @@
+0.1.1 / 2011-10-18
+  * use awk regex operator
+
 0.1 / 2011-10-08
   - First release
     * supports directories with spaces

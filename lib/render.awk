@@ -67,7 +67,7 @@ END {
 function bind_data(txt,   tag, key) {
   if (match(txt, /{{([^}]*)}}/)) {
     tag = substr(txt, RSTART, RLENGTH)
-    match(tag, /(\w|[?]).*[^}]/)
+    match(tag, /([[:alnum:]_]|[?]).*[^}]/)
     key = substr(tag, RSTART, RLENGTH)
     gsub(tag, data[key], txt)
     return bind_data(txt, data)
