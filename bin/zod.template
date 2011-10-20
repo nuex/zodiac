@@ -13,12 +13,94 @@ _zod_error() {
   exit 1
 }
 
+_zod_config() {
+  cat - "$cfg" <<!
+[parse]
+htm,html
+[parse_convert]
+md  awk -f "$zod_lib/markdown.awk"
+[ignore]
+helpers.awk
+*.layout
+*.meta
+config
+!
+}
+
+_zod_find_opt_builder() {
+  phase="$1"
+  _zod_config |
+  awk -f "$zod_lib/config.awk" \
+      -f "$zod_lib/opt_builder.awk" \
+      -v phase="$phase"
+}
+
+_zod_destination() {
+  file="$1"
+  # Find the target directory if one must be created
+  subdir="${file%/*}"
+  subdir="${subdir#$proj}"
+  if [ "$subdir" ]; then
+    destination="$target$subdir"
+    mkdir -p "$destination"
+  else
+    # There is no directory to create in target,
+    # i.e. file is in the root of the project
+    destination="$target"
+  fi
+  echo $destination;
+}
+
+_zod_render() {
+  file="$1"
+  ext="${file##*.}"
+  meta="${file%.$ext}.meta"
+
+  set -- -f "$zod_lib/config.awk"
+  set -- "$@" -f "$zod_lib/render.awk"
+  [ -f "$proj/helpers.awk" ] && set -- "$@" -f "$proj/helpers.awk"
+  set -- "$@" -
+  [ -f "$proj/global.meta" ] && set -- "$@" "$proj/global.meta"
+  [ -f "$meta" ] && set -- "$@" "$meta"
+  set -- "$@" "$file"
+  [ -f "$proj/main.layout" ] && set -- "$@" "$proj/main.layout"
+
+  page="${file##*/}"
+  page="${page%.$ext}.html"
+  destination=$(_zod_destination "$file")
+  _zod_config | awk "$@" > "$destination/$page"
+}
+
+_zod_copy() {
+  file="$1"
+  destination="$(_zod_destination "$file")"
+  cp "$file" "$destination"
+}
+
+_zod_exec() {
+  phase="$@"
+  set -- "$proj" -type f
+  for instruction in $(_zod_find_opt_builder "$phase" "$cfg"); do
+    inst=$(echo $instruction | sed 's/"//g')
+    case $inst in
+      or  ) set -- "$@" -o;;
+      not ) set -- "$@" !;;
+      *   ) set -- "$@" -name "$inst";;
+    esac
+  done
+  find "$@" | while read -r file; do
+    case "$phase" in
+      render  ) _zod_render "$file";;
+      copy    ) _zod_copy "$file";;
+    esac
+  done
+}
+
 [ "$#" -ne 2 ] && { echo "usage: zod projectdir targetdir"; exit; }
 [ ! -d "$proj" ] && _zod_error "project directory does not exist"
 [ ! -d "$target" ] && _zod_error "target directory does not exist"
 
-find "$proj" -type f \
-              ! -name "*.layout" \
-              ! -name "*.meta" \
-              ! -name "helpers.awk" \
-              -exec zod_render "$zod_lib" "$proj" "$target" {} \;
+[ -f "$proj/.zod/config" ] && cfg="$proj/.zod/config"
+
+_zod_exec "render"
+_zod_exec "copy"

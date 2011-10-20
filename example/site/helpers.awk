@@ -5,9 +5,10 @@ function load_helpers() {
 }
 
 function page_title(  title) {
-  if ("title" in data) {
-    return data["title"] " - " data["site_title"]
+  if (data["title"]) {
+    title = data["title"] " - " data["site_title"]
   } else {
-    return data["site_title"]
+    title = data["site_title"]
   }
+  return title
 }

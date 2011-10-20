@@ -1,45 +1,28 @@
-# render.awk - Awk-based templating
+#
+# Render a zodiac page
+#
 
 BEGIN {
   action = "none"
   ext = "none"
-  main_content_type = "_main"
+  main = "_main"
   helpers_loaded = "no"
   layout = ""
-  filter_cmds["htm"]  = "none"
-  filter_cmds["html"] = "none"
-  filter_cmds["md"]   = markdown_filter_cmd
 }
 
 {
   split(FILENAME, parts, ".")
   ext = parts[length(parts)]
-  if (ext == "config") {
+  if ((FILENAME == "config") || (FILENAME == "-")) {
     action = "config"
   } else if (ext == "meta") {
     action = "meta"
   } else if (ext == "layout") {
     action = "layout"
   } else {
-    # not a known extension, assuming this line
-    # is from a page
-    content_extension = ext
     action = "page"
+    filter_ext = ext
   }
-}
-
-# Process lines from config
-# Also ignore comments and empty lines
-action == "config" && (NF > 0) && (!/^;.*/) {
-  split($0, filter_kv, ": ")
-  split(filter_kv[1], filter_extensions, ",")
-  filter_cmd = filter_kv[2]
-
-  for (i = 1; i <= length(filter_extensions); i++) {
-    filter_cmds[filter_extensions[i]] = filter_cmd
-  }
-
-  next
 }
 
 # Process lines from meta files
@@ -58,14 +41,14 @@ action != "meta" && helpers_loaded == "no" && helpers == "yes" {
 
 # Process lines from the page
 action == "page" {
-  if (!contents[main_content_type]) {
-    contents[main_content_type] = bind_data($0)
+  if (!contents[main]) {
+    contents[main] = bind_data($0)
 
     # save the extension for this content type
     # to find the appropriate filter to render it
-    content_extensions[main_content_type] = ext
+    filter_exts[main] = ext
   } else {
-    contents[main_content_type] = contents[main_content_type] "\n" bind_data($0)
+    contents[main] = contents[main] "\n" bind_data($0)
   }
   next
 }
@@ -75,7 +58,7 @@ action == "layout" {
 
   # replace yield with rendered content
   if (match($0, /{{{yield}}}/)) {
-    sub(/{{{yield}}}/, render_content(main_content_type))
+    sub(/{{{yield}}}/, render_content(main))
   }
 
   if (layout == "") {
@@ -89,14 +72,14 @@ END {
   if (layout != "") {
     print layout
   } else {
-    print render_content(main_content_type)
+    print render_content(main)
   }
 }
 
 function bind_data(txt,   tag, key) {
   if (match(txt, /{{([^}]*)}}/)) {
     tag = substr(txt, RSTART, RLENGTH)
-    match(tag, /(\w|[?]).*[^}]/)
+    match(tag, /([[:alnum:]_]|[?]).*[^}]/)
     key = substr(tag, RSTART, RLENGTH)
     gsub(tag, data[key], txt)
     return bind_data(txt, data)
@@ -105,14 +88,14 @@ function bind_data(txt,   tag, key) {
   }
 }
 
-function render_content(type,     ext_key, content_extension, filter_cmd, txt) {
+function render_content(type,     ext_key, filter_ext, filter_cmd, txt) {
   ext_key = type "_ext"
 
   # Get the extension of the content type
-  content_extension = content_extensions[type]
+  filter_ext = filter_exts[type]
 
   # Get the appropriate filter command for this extension
-  filter_cmd = filter_cmds[content_extension]
+  filter_cmd = filter[filter_ext]
 
   # Get the text of the content for the given type
   txt = contents[type]
@@ -125,6 +108,7 @@ function render_content(type,     ext_key, content_extension, filter_cmd, txt) {
 }
 
 function run_filter(cmd, txt,   rand_date, tmpfile, rendered_txt, date_cmd, markdown_cmd, line) {
+  # TODO use mktemp instead
   date_cmd = "date +%Y%m%d%H%M%S"
   date_cmd | getline rand_date
   close(date_cmd)

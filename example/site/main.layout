@@ -6,10 +6,14 @@
     <title>{{page_title}}</title>
   </head>
   <body>
-    {{>header}}
+    <header>
+      <h1><a href="/">{{site_title}}</a></h1>
+    </header>
     <article>
       {{{yield}}}
     </article>
-    {{>footer}}
+    <footer>
+      <p>powered by static files</p>
+    </footer>
   </body>
 </html>
