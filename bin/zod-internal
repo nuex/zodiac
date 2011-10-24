@@ -5,7 +5,7 @@ __zod_config() {
 [parse]
 htm,html
 [parse_convert]
-md  awk -f "/home/nuex/_dev/zodiac/lib/markdown.awk"
+md  awk -f "$zod_lib/markdown.awk"
 [ignore]
 helpers.awk
 *.layout
