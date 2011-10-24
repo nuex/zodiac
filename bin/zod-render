@@ -1,0 +1,24 @@
+#!/bin/sh
+
+. zod-internal
+
+zod_lib="$1"; shift
+proj="$1"; shift
+target="$1"; shift
+file="$1"; shift
+ext="${file##*.}"
+meta="${file%.$ext}.meta"
+page="${file##*/}"
+page="${page%.$ext}.html"
+destination=$(__zod_destination "$file")
+
+set -- -f "$zod_lib/render.awk"
+set -- "$@" -f "$zod_lib/config.awk"
+[ -f "$proj/helpers.awk" ] && set -- "$@" -f "$proj/helpers.awk"
+set -- "$@" -
+[ -f "$proj/global.meta" ] && set -- "$@" "$proj/global.meta"
+[ -f "$meta" ] && set -- "$@" "$meta"
+set -- "$@" "$file"
+[ -f "$proj/main.layout" ] && set -- "$@" "$proj/main.layout"
+
+__zod_config | awk "$@" > "$destination/$page"

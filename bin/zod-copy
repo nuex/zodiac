@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. zod-internal
+
+zod_lib="$1"; shift
+proj="$1"; shift
+target="$1"; shift
+file="$1"
+destination="$(__zod_destination "$file")"
+
+cp "$file" "$destination"

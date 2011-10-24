@@ -13,7 +13,7 @@ BEGIN {
 {
   split(FILENAME, parts, ".")
   ext = parts[length(parts)]
-  if ((FILENAME == "config") || (FILENAME == "-")) {
+  if (FILENAME == "-") {
     action = "config"
   } else if (ext == "meta") {
     action = "meta"

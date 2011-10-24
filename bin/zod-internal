@@ -1,0 +1,31 @@
+#!/bin/sh
+
+__zod_config() {
+  cat - "$proj/.zod/config" <<! 2>/dev/null
+[parse]
+htm,html
+[parse_convert]
+md  awk -f "/home/nuex/_dev/zodiac/lib/markdown.awk"
+[ignore]
+helpers.awk
+*.layout
+*.meta
+config
+!
+}
+
+__zod_destination() {
+  file="$1"
+  # Find the target directory if one must be created
+  subdir="${file%/*}"
+  subdir="${subdir#$proj}"
+  if [ "$subdir" ]; then
+    destination="$target$subdir"
+    mkdir -p "$destination"
+  else
+    # There is no directory to create in target,
+    # i.e. file is in the root of the project
+    destination="$target"
+  fi
+  echo $destination;
+}

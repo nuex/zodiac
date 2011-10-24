@@ -3,7 +3,7 @@
 # ZODIAC - a simple static site generator
 # Copyright (c) 2011 Chase Allen James <nx-zodiac@nu-ex.com>
 
-zod_lib=ZODLIB_PATH
+zod_lib=/home/nuex/_dev/zodiac/lib
 proj="$1"
 target="$2"
 
