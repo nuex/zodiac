@@ -108,7 +108,6 @@ function render_content(type,     ext_key, filter_ext, filter_cmd, txt) {
 }
 
 function run_filter(cmd, txt,   rand_date, tmpfile, rendered_txt, date_cmd, markdown_cmd, line) {
-  # TODO use mktemp instead
   date_cmd = "date +%Y%m%d%H%M%S"
   date_cmd | getline rand_date
   close(date_cmd)
