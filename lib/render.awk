@@ -107,7 +107,7 @@ function render_content(type,     ext_key, filter_ext, filter_cmd, txt) {
   }
 }
 
-function run_filter(cmd, txt,   rand_date, tmpfile, rendered_txt, date_cmd, markdown_cmd, line) {
+function run_filter(cmd, txt,   rand_date, tmpfile, rendered_txt, date_cmd, filter_cmd, line) {
   date_cmd = "date +%Y%m%d%H%M%S"
   date_cmd | getline rand_date
   close(date_cmd)
@@ -115,7 +115,7 @@ function run_filter(cmd, txt,   rand_date, tmpfile, rendered_txt, date_cmd, mark
   tmpfile = "/tmp/awk_render" rand_date
   filter_cmd = cmd " > " tmpfile
 
-  # pipe content to filter.awk
+  # pipe content to filter command
   print txt | filter_cmd
   close(filter_cmd)
 
