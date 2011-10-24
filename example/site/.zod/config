@@ -1,0 +1,47 @@
+; This is an example zodiac configuration file
+; A line starting with a `;` is a comment and is ignored.
+
+; The `parse` section is for page templates that will not be converted to
+; HTML via an external utility.
+;
+;   [parse]
+;   extension,extension
+;   extension
+;   ...
+;
+
+
+; [parse]
+; htm
+; html
+
+
+; The `parse_convert` section is for page templates that will be converted
+; to HTML via an external utility.
+; 
+; By default, page templates with the `md` extension are piped through the
+; built-in awk implementation of Markdown.
+;
+;   [parse_convert]
+;   extension,extension   command
+;   extension             command
+;   ...
+
+
+; [parse_convert]
+; md,markdown   discount
+; txt           asciidoc -s -
+
+
+; The `ignore` section is for patterns that zodiac will ignore when
+; searching the project directory. Ignored files will not be parsed or
+; copied to the target directory.
+;
+;   [ignore]
+;   pattern
+;   pattern
+;   ...
+
+
+; [ignore]
+; Makefile

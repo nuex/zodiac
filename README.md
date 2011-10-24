@@ -1,4 +1,4 @@
-# zodiac - a static site generator
+# zodiac
 
 ZODIAC is a static website generator powered by sh and awk. The core features of zodiac are:
 
@@ -8,7 +8,7 @@ ZODIAC is a static website generator powered by sh and awk. The core features of
 * a simple, easy to use templating system
 * supports custom helpers written in awk
 * configuration, meta, helpers, etc. can be added as you need them
-* convert your markup using any external command that accepts a unix pipe (smu, asciidoc, discount, rst2html, etc)
+* convert your markup using any external command that accepts a UNIX-style pipe (smu, asciidoc, discount, rst2html, etc)
 
 ## SYNOPSIS
 
@@ -72,7 +72,7 @@ Page metadata will always override global metadata of the same key.
 
 Templates come in two forms, page templates and layout templates. Metadata can be bound to templates by using the `{{key}}` notation in your pages and layout files.
 
-Page templates can have any extension that zodiac can convert. Out of the box, page templates can have `md`, `htm`, or an `html` extension. Other extensions can be supported if they are configured in the `.zod/config` file in the project directory.
+Page templates can have any extension that zodiac can convert. Out of the box, page templates can have an `md`, `htm`, or `html` extension. Other extensions and markup types can be supported if they are configured in the `.zod/config` file in the project directory.
 
 The `main.layout` file wraps HTML content around a page template.  A `main.layout` file could look something like this:
 
@@ -125,8 +125,7 @@ Just be sure to set the data array in the `load_helpers()` function at the top o
 For more control over the parsing and conversion process, a `.zod/config` file can be created within your project directory. Here is a sample config:
 
     [parse]
-    htm
-    html
+    htm,html
 
     [parse_convert]
     md      smu
