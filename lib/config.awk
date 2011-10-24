@@ -29,7 +29,6 @@ action == "config" && section == "parse_convert" && (NF > 1) {
     ext = exts[i]
     gsub(/ /, "", ext)
     filter[ext] = cmd
-    print cmd >> "awk.log"
   }
   next
 }
