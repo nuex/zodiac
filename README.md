@@ -3,13 +3,12 @@
 ZODIAC is a static website generator powered by sh and awk. The core features of zodiac are:
 
 * utliization of existing tools (i.e. awk, sh, find, etc.)
+* supports using plain html
 * built-in support for markdown
 * a simple, easy to use templating system
 * supports custom helpers written in awk
-* multiple layouts
-* partials
 * configuration, meta, helpers, etc. can be added as you need them
-* support any markup format via external tools
+* convert your markup using any external command that accepts a unix pipe (smu, asciidoc, discount, rst2html, etc)
 
 ## SYNOPSIS
 
@@ -73,7 +72,7 @@ Page metadata will always override global metadata of the same key.
 
 Templates come in two forms, page templates and layout templates. Metadata can be bound to templates by using the `{{key}}` notation in your pages and layout files.
 
-Page templates can be either markdown files with an `.md` extension or plain HTML files with a `.html` extension.
+Page templates can have any extension that zodiac can convert. Out of the box, page templates can have `md`, `htm`, or an `html` extension. Other extensions can be supported if they are configured in the `.zod/config` file in the project directory.
 
 The `main.layout` file wraps HTML content around a page template.  A `main.layout` file could look something like this:
 
@@ -126,18 +125,15 @@ Just be sure to set the data array in the `load_helpers()` function at the top o
 For more control over the parsing and conversion process, a `.zod/config` file can be created within your project directory. Here is a sample config:
 
     [parse]
-      htm
-      html
+    htm
+    html
 
     [parse_convert]
-      md      smu
-      txt     asciidoc -s -
-
-    [convert]
-      coffee  coffee -s > {}.js
+    md      smu
+    txt     asciidoc -s -
 
     [ignore]
-      Makefile
+    Makefile
 
 Here we're only parsing (not converting to a different format) files matching `*.htm` and `*.html`.
 
@@ -145,46 +141,9 @@ Files matching `*.md` are going to be parsed and converted using the `smu` markd
 
 Files matching `*.txt` are going to be parsed and converted using `asciidoc`.
 
-Files matching `*.coffee` are going to be converted to JavaScript before being copied into the target directory. The `{}` notation will be expanded to the path and filename of the coffeescript file, but without the `.coffee` extension.
-
 Files matching `Makefile` will be ignored and not copied.
 
 Conversion programs must accept a UNIX-style pipe and send converted data to stdout.
-
-### Per-page Templates and Partials
-
-Multiple templates and partials are also supported.
-
-For example; a `blog.md` page:
-
-  title: my blog
-  layout: blog
-
-A `sidebar.partial`:
-
-  <div id="sidebar">
-    <ul>
-      <li><a href="/blog/some-article.html">Some Article</a></li>
-      <li><a href="/blog/another-one.html">Another One</a></li>
-    </ul>
-  </div>
-
-And `blog.layout`:
-
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Blog Page</title>
-    </head>
-    <body>
-      <div id="main">
-        {{{yield}}}
-      </div>
-      {{>sidebar}}
-    </body>
-  </html>
-
-`{{>sidebar}}` will be replaced with the parsed contents of `sidebar.partial`.
 
 ## CREDITS
 
