@@ -1,3 +1,7 @@
+0.2.1 / 2011-10-24
+  - Bugfix release
+    * removed debug line in find_cmd.awk
+
 0.2 / 2011-10-24
   - Feature Release
     * custom configuration added (convert markup using any program)
