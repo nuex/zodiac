@@ -1,5 +1,10 @@
+0.2 / 2011-10-24
+  - Feature Release
+    * custom configuration added (convert markup using any program)
+
 0.1.1 / 2011-10-18
-  * use awk regex operator
+  - Bugfix release
+    * use awk regex operator
 
 0.1 / 2011-10-08
   - First release
