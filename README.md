@@ -111,11 +111,12 @@ The `helpers.awk` file is an awk script that can make custom data available to y
 
     # your custom functions
     function page_title(  title) {
-      if ("title" in data) {
-        return data["title"] "-" data["site_title"]
+      if (data["title"]) {
+        title = data["title"] " - " data["site_title"]
       } else {
-        return data["site_title"]
+        title = data["site_title"]
       }
+      return title
     }
 
 Just be sure to set the data array in the `load_helpers()` function at the top of the script to make your custom data available to the template.
