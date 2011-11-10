@@ -34,7 +34,7 @@ action == "meta" {
 
 # Done processing meta
 # Since data is loaded now, load the helpers
-action != "meta" && helpers_loaded == "no" && helpers == "yes" {
+action != "meta" && action != "config" && helpers_loaded == "no" && helpers == "yes" {
   load_helpers()
   helpers_loaded = "yes"
 }
