@@ -22,8 +22,11 @@ install: all
 	@echo Installation Complete
 
 uninstall:
-	@echo Uninstalling zod executable
+	@echo Uninstalling zod executables
 	@rm ${PREFIX}/bin/zod
+  @rm ${PREFIX}/bin/zod-render
+  @rm ${PREFIX}/bin/zod-copy
+  @rm ${PREFIX}/bin/zod-internal
 	@echo Uninstalling awk lib files
 	@rm -rf ${AWKLIB}
 	@echo Uninstallation Complete
