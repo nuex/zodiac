@@ -58,7 +58,7 @@ action == "layout" {
 
   # replace yield with rendered content
   if (match($0, /{{{yield}}}/)) {
-    sub(/{{{yield}}}/, render_content(main))
+    sub(/{{{yield}}}/, escape_special_chars(render_content(main)))
   }
 
   if (layout == "") {
@@ -128,4 +128,10 @@ function run_filter(cmd, txt,   rand_date, tmpfile, rendered_txt, date_cmd, filt
   system("rm " tmpfile)
 
   return rendered_txt
+}
+
+# Prevent awk from replacing ampersand's with matched text
+function escape_special_chars(  txt) {
+  gsub(/&/, "\\\\&", txt)
+  return txt
 }
