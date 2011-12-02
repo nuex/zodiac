@@ -130,7 +130,7 @@ function run_filter(cmd, txt,   rand_date, tmpfile, rendered_txt, date_cmd, filt
   return rendered_txt
 }
 
-# Prevent awk from replacing ampersand's with matched text
+# Prevent awk from replacing ampersands with matched text
 function escape_special_chars(  txt) {
   gsub(/&/, "\\\\&", txt)
   return txt
