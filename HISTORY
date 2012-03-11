@@ -1,3 +1,7 @@
+0.2.4 / 2012-03-11
+  - Bugfix release
+    * text with ampersand's no longer gets munged
+
 0.2.3 / 2011-11-11
   - Bugfix release
     * fixed Makefile (use tab instead of space)
