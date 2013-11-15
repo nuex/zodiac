@@ -77,14 +77,63 @@ END {
 }
 
 function bind_data(txt,   tag, key) {
-  if (match(txt, /{{([^}]*)}}/)) {
+  if (match(txt, /{{> ([^}]*)}}/)) {
     tag = substr(txt, RSTART, RLENGTH)
     match(tag, /([[:alnum:]_]|[?]).*[^}]/)
     key = substr(tag, RSTART, RLENGTH)
-    gsub(tag, data[key], txt)
-    return bind_data(txt, data)
+    partial_txt = load_partial(key)
+    gsub(tag, escape_special_chars(partial_txt), txt)
+    return bind_data(txt)
+  } else if (match(txt, /{{([^}]*)}}/)) {
+    tag = substr(txt, RSTART, RLENGTH)
+    match(tag, /([[:alnum:]_]|[?]).*[^}]/)
+    key = substr(tag, RSTART, RLENGTH)
+    gsub(tag, escape_special_chars(data[key]), txt)
+    return bind_data(txt)
   } else {
     return txt
+  }
+}
+
+# Returns the text from a partial
+#
+# It will load the partial from the cache if possible.
+# Otherwise it will open the partial file and load each
+# line.
+#
+# Nothing is returned if the file doesn't exist.
+function load_partial(key,     partial, partial_file, line) {
+  partial = partials[key]
+  if (partial) {
+    return partial
+  } else {
+    pwd = ENVIRON["PWD"]
+    partial_file = pwd "/" proj "/" key ".partial"
+    if (is_file(partial_file)) {
+      while((getline line < partial_file) > 0) {
+        if (partial_txt) {
+          partial_txt = partial_txt "\n" line
+        } else {
+          partial_txt = line
+        }
+      }
+
+      close(partial_file)
+
+      partials[key] = partial_txt
+
+      return partial_txt
+    }
+  }
+}
+
+# Check if a file exists
+function is_file(file) {
+  check = "[ -f " file " ] && echo yes"
+  check | getline response
+  close(check)
+  if (response == "yes") {
+    return "yes"
   }
 }
 

@@ -21,4 +21,4 @@ set -- "$@" -
 set -- "$@" "$file"
 [ -f "$proj/main.layout" ] && set -- "$@" "$proj/main.layout"
 
-__zod_config | awk "$@" > "$destination/$page"
+__zod_config | awk -v proj="$proj" "$@" > "$destination/$page"

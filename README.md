@@ -98,6 +98,45 @@ The `main.layout` file wraps HTML content around a page template.  A `main.layou
 
 `{{{yield}}}` is a special tag that renders the page content within the layout. `{{{yield}}}` can only be used in the `main.layout` file.
 
+### Partials
+
+Partials are reusable snippets that can be included in different areas of your site. Partials must have the `.partial` extension and must be in the root of your project directory. Partials are called using two curly brackets and a greater than sign.
+
+    <body>
+      <h1>Welcome!</h1>
+
+      {{> nav}}
+
+      <p>Thanks for checking out my site!</p>
+    </body>
+
+The `nav.partial` file could have the following contents:
+
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+
+This would make the above template expand to:
+
+    <body>
+      <h1>Welcome!</h1>
+
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </nav>
+
+      <p>Thanks for checking out my site!</p>
+    </body>
+
+
 ### Helpers
 
 The `helpers.awk` file is an awk script that can make custom data available to your templates. You also have access to the page and global data. Here is a peak at the script included in the examples folder:
