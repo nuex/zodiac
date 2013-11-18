@@ -76,7 +76,7 @@ END {
   }
 }
 
-function bind_data(txt,   tag, key) {
+function bind_data(txt,   tag, key, partial_txt) {
   if (match(txt, /{{> ([^}]*)}}/)) {
     tag = substr(txt, RSTART, RLENGTH)
     match(tag, /([[:alnum:]_]|[?]).*[^}]/)
@@ -102,7 +102,7 @@ function bind_data(txt,   tag, key) {
 # line.
 #
 # Nothing is returned if the file doesn't exist.
-function load_partial(key,     partial, partial_file, line) {
+function load_partial(key,     partial, pwd, partial_file, partial_txt, line) {
   partial = partials[key]
   if (partial) {
     return partial
@@ -128,7 +128,7 @@ function load_partial(key,     partial, partial_file, line) {
 }
 
 # Check if a file exists
-function is_file(file) {
+function is_file(file,    check, response) {
   check = "[ -f " file " ] && echo yes"
   check | getline response
   close(check)
