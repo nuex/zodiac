@@ -8,6 +8,7 @@ htm,html
 md  awk -f "$zod_lib/markdown.awk"
 [ignore]
 helpers.awk
+*.partial
 *.layout
 *.meta
 config
