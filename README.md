@@ -139,7 +139,7 @@ This would make the above template expand to:
 
 ### Helpers
 
-The `helpers.awk` file is an awk script that can make custom data available to your templates. You also have access to the page and global data. Here is a peak at the script included in the examples folder:
+The `helpers.awk` file is an awk script that can make custom data available to your templates. You also have access to the page and global data. Here is a peek at the script included in the examples folder:
 
     { helpers = "yes" }
 
